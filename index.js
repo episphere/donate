@@ -30,7 +30,7 @@ http
         })
         req.on('end',function(){
           let bodyJSON=JSON.parse(body)
-          let filename=body.filename||'hello.json'
+          let filename=body.filename||`${tk}.json`
           fs.writeFile(`./data/${filename}`,body,function(err,data){
             if (err) {
               return console.log('posted failed:',err);
