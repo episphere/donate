@@ -41,12 +41,18 @@ http
         })
         //debugger
       }else{
-        res.write(`Hello World from Jonas :-), you have provided a valid token at ${Date()}`); //write a response to the client
-        res.end(); //end the response
+        fs.readFile(`data/${tk}.json`,'utf8',function(err,data){
+          if(err){
+            data = `{"error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
+          }
+          res.end(data)
+        })
+        //res.write(`Hello World from Jonas :-), you have provided a valid token at ${Date()}`); //write a response to the client
+        //res.end(); //end the response
       }
     }else{
-      res.write(`no valid token provided`); //write a response to the client
-      res.end(); //end the response
+      //res.write(`no valid token provided`); //write a response to the client
+      res.end(`{"status":"ok","msg":"no valid token provided","date":"${Date()}"}`); //end the response
     }
       
       
