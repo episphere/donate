@@ -62,7 +62,7 @@ http
               //console.log('posted failed:',err);
               res.end("POSTing failed")
             }else{
-              res.end(`{"msg":"successufly posted at ${Date()}","status":"donate"}`)
+              res.end(`{"msg":"successufly posted at ${Date()}","donate":"post"}`)
             }
             //console.log(`posted to ${filename}:\n`,bodyJSON)
           })
@@ -70,7 +70,7 @@ http
         //debugger
       }else{ // GET
         if(tk==adminTk){ // Admin token
-          let json = JSON.parse(`{"status":"donate","msg":"admin stuff","files":${JSON.stringify(fs.readdirSync('data'))}}`)
+          let json = JSON.parse(`{"donate":"admin","msg":"admin stuff","files":${JSON.stringify(fs.readdirSync('data'))}}`)
           try{
             json.data=JSON.parse(fs.readFileSync(`data/${tk}.json`,'utf8'))
           }catch(err){
@@ -80,7 +80,7 @@ http
         }else{
           fs.readFile(`data/${tk}.json`,'utf8',function(err,data){
             if(err){
-              data = `{"status":"donate","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
+              data = `{"donate":"get","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
             }
             res.end(data)
           })
@@ -92,7 +92,7 @@ http
     }else{ // no valid token
       //res.write(`no valid token provided`); //write a response to the client
       // check if this is admin
-      res.end(`{"status":"donate","msg":"no valid token provided","date":"${Date()}"}`); //end the response
+      res.end(`{"donate":"invalid","msg":"no valid token provided","date":"${Date()}"}`); //end the response
       
     }
       
