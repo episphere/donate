@@ -70,7 +70,7 @@ http
         //debugger
       }else{ // GET
         if(tk==adminTk){ // Admin token
-          let json = JSON.parse(`{"status":"donate","msg":"admin stuff","ls":${JSON.stringify(fs.readdirSync('data'))}}`)
+          let json = JSON.parse(`{"status":"donate","msg":"admin stuff","files":${JSON.stringify(fs.readdirSync('data'))}}`)
           try{
             json.data=JSON.parse(fs.readFileSync(`data/${tk}.json`,'utf8'))
           }catch(err){
