@@ -33,17 +33,19 @@ http
           let filename=body.filename||`${tk}.json`
           fs.writeFile(`./data/${filename}`,body,function(err,data){
             if (err) {
-              return console.log('posted failed:',err);
+              //console.log('posted failed:',err);
+              res.end("POSTing failed")
+            }else{
+              res.end(`{"msg":"successufly posted at ${Date()}","status":"donate"}`)
             }
-            console.log(`posted to ${filename}:\n`,bodyJSON)
-            res.end(`successufly posted at ${Date()}`)
+            //console.log(`posted to ${filename}:\n`,bodyJSON)
           })
         })
         //debugger
       }else{
         fs.readFile(`data/${tk}.json`,'utf8',function(err,data){
           if(err){
-            data = `{"error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
+            data = `{"status":"donate","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
           }
           res.end(data)
         })
@@ -52,7 +54,7 @@ http
       }
     }else{
       //res.write(`no valid token provided`); //write a response to the client
-      res.end(`{"status":"ok","msg":"no valid token provided","date":"${Date()}"}`); //end the response
+      res.end(`{"status":"donate","msg":"no valid token provided","date":"${Date()}"}`); //end the response
     }
       
       
