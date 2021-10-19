@@ -11,7 +11,21 @@ function getTokens(n=1000){ // get tokens or create them first
   }
   return tks
 }
-var tokens = getTokens() 
+var tokens = getTokens()
+
+function adminToken(){
+  // check for admin token
+  let adminTk
+  try {
+    adminTk=fs.readFileSync('./data/admin.txt','utf8')
+  } catch (err) {
+    fs.writeFileSync("./data/admin.txt",Math.random().toString().slice(2)+Math.random().toString().slice(2))
+    adminTk=fs.readFileSync('./data/admin.txt','utf8')
+  }
+  return adminTk
+}
+var adminTk=adminToken()
+
 //var tokens = fs.readFileSync('./data/tokens.txt','utf8').split(',')
 function checkToken(url){
   let tk=false
@@ -19,7 +33,7 @@ function checkToken(url){
     let av = url.slice(url.indexOf('?')+1).match('token=[^&]*')
     if(av){ // a token was submitted
       let tkCandidate=av[0].slice(6)
-      if(tokens.includes(tkCandidate)){
+      if(tokens.includes(tkCandidate)||tkCandidate==adminTk){
         tk=tkCandidate
       }
     }
@@ -30,7 +44,7 @@ function checkToken(url){
 //create a server object:
 http
   .createServer(function (req, res) {
-    console.log(`${Date()}\n`,req)
+    //console.log(`${Date()}\n`,req)
     let tk=checkToken(req.url)
     res.setHeader("Access-Control-Allow-Origin", "*")
     //res.setrHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
@@ -54,19 +68,32 @@ http
           })
         })
         //debugger
-      }else{
-        fs.readFile(`data/${tk}.json`,'utf8',function(err,data){
-          if(err){
-            data = `{"status":"donate","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
+      }else{ // GET
+        if(tk==adminTk){ // Admin token
+          let json = JSON.parse(`{"status":"donate","msg":"admin stuff","ls":${JSON.stringify(fs.readdirSync('data'))}}`)
+          try{
+            json.data=JSON.parse(fs.readFileSync(`data/${tk}.json`,'utf8'))
+          }catch(err){
+            //
           }
-          res.end(data)
-        })
+          res.end(JSON.stringify(json))
+        }else{
+          fs.readFile(`data/${tk}.json`,'utf8',function(err,data){
+            if(err){
+              data = `{"status":"donate","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
+            }
+            res.end(data)
+          })
+        }
+          
         //res.write(`Hello World from Jonas :-), you have provided a valid token at ${Date()}`); //write a response to the client
         //res.end(); //end the response
       }
-    }else{
+    }else{ // no valid token
       //res.write(`no valid token provided`); //write a response to the client
+      // check if this is admin
       res.end(`{"status":"donate","msg":"no valid token provided","date":"${Date()}"}`); //end the response
+      
     }
       
       
