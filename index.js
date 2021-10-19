@@ -1,6 +1,18 @@
 var http = require("http");
 var fs = require("fs");
-var tokens = fs.readFileSync('./data/tokens.txt','utf8').split(',')
+function getTokens(n=1000){ // get tokens or create them first
+  let tks=[]
+  try{
+    tks=fs.readFileSync('./data/tokens.txt','utf8').split(',')
+  } catch (err) { // tokens not created yet, do it first
+    fs.mkdirSync('data')
+    fs.writeFileSync("./data/tokens.txt",[...Array(n)].map(_=>Math.random().toString().slice(2)).join(','))
+    tks=fs.readFileSync('./data/tokens.txt','utf8').split(',')
+  }
+  return tks
+}
+var tokens = getTokens() 
+//var tokens = fs.readFileSync('./data/tokens.txt','utf8').split(',')
 function checkToken(url){
   let tk=false
   if(url.indexOf('?')>-1){
