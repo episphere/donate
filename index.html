@@ -25,4 +25,31 @@ This project explores what could be a Minimal infrastructure for data donation u
 </p>
 <button>Donate</button>
 </body>
+<script>
+    showHide.onclick=function(){
+        let info = document.getElementById('info')
+        let that=this
+        let tlag=500
+        if(this.innerText=='hide info'){
+            info.hidden=true
+            that.style.backgroundColor='yellow'
+            setTimeout(_=>{
+                that.innerText='show info'
+                that.style.backgroundColor='transparent'
+            },tlag)
+        }else{
+            info.hidden=false
+            setTimeout(_=>{
+                that.innerText='hide info'
+                that.style.backgroundColor='transparent'
+            },tlag)          
+        }
+        that.onmouseover=function(){
+            that.style.backgroundColor='yellow'
+        }
+        that.onmouseout=function(){
+            that.style.backgroundColor='transparent'
+        }
+    }
+</script>
 </html>
