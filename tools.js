@@ -11,9 +11,9 @@ async function post(url='http://localhost:3000',data={hello:'world!',at:Date()},
     }))[format]()
 }
 
-function makeTokens(n){
-  return [...Array(n)].
-  map(_=>Math.random().toString().slice(2))
+function makeTokens(n=1,m=16,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'){
+  return [...Array(n)].map(_=>[...Array(m)]
+  .map(_=>str[Math.floor(Math.random()*62)]).join(''))
 }
 
 function getParms(str=location.search+location.hash){

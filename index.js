@@ -6,7 +6,7 @@ function getTokens(n=1000){ // get tokens or create them first
     tks=fs.readFileSync('./data/tokens.txt','utf8').split(',')
   } catch (err) { // tokens not created yet, do it first
     fs.mkdirSync('data')
-    fs.writeFileSync("./data/tokens.txt",[...Array(n)].map(_=>Math.random().toString().slice(2)).join(','))
+    fs.writeFileSync("./data/tokens.txt",[...Array(n)].map(_=>makeTokens(1,16)).join(','))
     tks=fs.readFileSync('./data/tokens.txt','utf8').split(',')
   }
   return tks
@@ -19,7 +19,7 @@ function adminToken(){
   try {
     adminTk=fs.readFileSync('./data/admin.txt','utf8')
   } catch (err) {
-    fs.writeFileSync("./data/admin.txt",Math.random().toString().slice(2)+Math.random().toString().slice(2))
+    fs.writeFileSync("./data/admin.txt",makeTokens(1,32)[0])
     adminTk=fs.readFileSync('./data/admin.txt','utf8')
   }
   return adminTk
@@ -39,6 +39,11 @@ function checkToken(url){
     }
   }
   return tk
+}
+
+function makeTokens(n=1,m=16,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'){
+  return [...Array(n)].map(_=>[...Array(m)]
+  .map(_=>str[Math.floor(Math.random()*62)]).join(''))
 }
 
 //create a server object:
