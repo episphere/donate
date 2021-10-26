@@ -7,48 +7,39 @@
 <body>
 <h1>epiDonate <sup style="font-size:small;color:navy"> [<a href="https://github.com/episphere/donate" target="_blank">code</a>] </sup></h1>
 <div id="info">
-<p>
+<p><b style="color:brown">Problem -</b>
 Many cohort studies require mechanisms for data donation. 
 Typical examples are the donation of consumer genomics and wearable sensor data. 
 </p>
 <p>
-It is however not reasonable to expect the participant to have the computational skills to handle the data extraction and submission.
+It is however not reasonable to expect participants to have the computational skills, or the patience, to handle the data extraction and submission on their own.
 Instead, the data donnation should be integrated in the cohort Web Application such that the data can be retireved by engaging the consumer-facing APIs on behalf of the participant.
 </p>
+<p><p><b style="color:brown">Solution -</b>
+A web service was developed to manage individual invitation tokens for data donation.
+This way, the donation is reduced to clicking on a donation button in the same App that acquires the data on behalf of the devide owner.
+</p>
 <p>
-This way, the donation is reduced to the simple action of a cohort participant clicking on a button saying "donate", most likely from a personal mobile device.
-This project explores what could be a Minimal infrastructure for data donation using the modern Web Stack. 
+The design of the web service explores what could be a Minimal infrastructure for data donation using the modern Web Stack. 
+The API only needs two commands to handle the transactions, get and post, matching the HTTP GET and POST methods. 
+The service automatically creates user and admin tokens stored in a gitignored data folder automatically created to hold them.
 </p>
 </div>
 <p>
 [<span id="showHide" class="link" style="color:green">hide info</span>]
 </p>
+
 <button>Donate</button>
 </body>
 <script>
     showHide.onclick=function(){
         let info = document.getElementById('info')
-        let that=this
-        let tlag=500
         if(this.innerText=='hide info'){
             info.hidden=true
-            that.style.backgroundColor='yellow'
-            setTimeout(_=>{
-                that.innerText='show info'
-                that.style.backgroundColor='transparent'
-            },tlag)
+            this.innerText='show info'
         }else{
-            info.hidden=false
-            setTimeout(_=>{
-                that.innerText='hide info'
-                that.style.backgroundColor='transparent'
-            },tlag)          
-        }
-        that.onmouseover=function(){
-            that.style.backgroundColor='yellow'
-        }
-        that.onmouseout=function(){
-            that.style.backgroundColor='transparent'
+            info.hidden=false   
+            this.innerText='hide info'    
         }
     }
 </script>

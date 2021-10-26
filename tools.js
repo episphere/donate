@@ -16,4 +16,16 @@ function makeTokens(n){
   map(_=>Math.random().toString().slice(2))
 }
 
-export {get,post,makeTokens}
+function getParms(str=location.search+location.hash){
+  let parms={}
+  let arr = str.match(/[^#?&=]*=[^#?&=]*/g)
+  if(arr){
+    arr.forEach(a=>{
+      a=a.split('=')
+      parms[a[0]]=a[1]
+    })
+  }
+  return parms
+}
+
+export {get,post,makeTokens,getParms}
