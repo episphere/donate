@@ -1,0 +1,28 @@
+{
+  "name": "donate",
+  "description": "Minimum token based web-stack infrastructure (server-side, nodejs) for data donation.",
+  "version": "1.0.0",
+  "main": "donateServerless.js",
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^2.0.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^10.0.0",
+    "firebase-functions": "^3.16.0"
+  },
+  "scripts": {
+    "start": "functions-framework --target=donate",
+    "inspect": "node --inspect node_modules/@google-cloud/functions-framework --target=donate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/episphere/donate.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/episphere/donate/issues"
+  },
+  "homepage": "https://github.com/episphere/donate#readme"
+}
