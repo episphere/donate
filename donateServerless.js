@@ -43,7 +43,6 @@ exports.donate = async (req, res) => {
         const userTokensFile = await readData(file);
         const userTokens = userTokensFile.split(',');
         if (userTokens.includes(token)) {
-          console.log(req.body)
           const body = req.body;
 
           if (Object.keys(body).length === 0) return res.status(400).json({ message: 'Body is empty!', code: 400 });
