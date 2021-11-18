@@ -4,6 +4,6 @@ steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['functions', 'add-iam-policy-binding', 'donate', '--member=allUsers', '--role=${_ROLE}']
 substitutions:
-  _SOURCE: https://source.cloud.google.com/nih-nci-dceg-episphere-dev/github_episphere_donate/moveable-aliases/faas/paths/FaaS/
+  _SOURCE: https://source.developers.google.com/nih-nci-dceg-episphere-dev/github_episphere_donate/moveable-aliases/faas/paths/FaaS/
   _RUNTIME: nodejs14
   _ROLE: roles/cloudfunctions.invoker
