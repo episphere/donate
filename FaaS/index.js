@@ -121,3 +121,8 @@ const generateRandomStrings = (size) => {
   let unique = a.filter((item, i, ar) => ar.indexOf(item) === i);
   return unique;
 }
+
+const makeTokens = (n=1,m=16,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') => {
+  return [...Array(n)].map(_=>[...Array(m)]
+  .map(_=>str[Math.floor(Math.random()*62)]).join(''))
+}
