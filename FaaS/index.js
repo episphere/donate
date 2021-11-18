@@ -30,7 +30,6 @@ exports.donate = async (req, res) => {
   const token = req.query.token ? req.query.token : req.headers.authorization ? req.headers.authorization.replace('Bearer ', '').trim() : null;
   await getTokens();
   if (!token) return res.status(401).json({ message: 'Authorization failed!', code: 401 });
-  const bucket = storage.bucket('donation-deleteme');
   const [files] = await bucket.getFiles();
   if (req.method === 'POST') {
     if (files.map(dt => dt.name).includes('userTokens.txt')) {
