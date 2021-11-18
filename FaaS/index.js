@@ -1,7 +1,8 @@
 const admin = require('firebase-admin');
 admin.initializeApp();
 const storage = admin.storage();
-const bucket = storage.bucket('donation-deleteme');
+const bucketName = process.env.GCSBucket || 'data-donation';
+const bucket = storage.bucket(bucketName);
 
 const getTokens = async (m = 10, n = 10000) => { // get tokens or create them first
   try {
