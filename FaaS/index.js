@@ -8,19 +8,13 @@ const getTokens = async (m = 10, n = 10000) => { // get tokens or create them fi
   try {
     const [files] = await bucket.getFiles();
     if (files.length === 0) {
-      const userTokens = await createTokenFiles(m, n);
-      return userTokens;
+      await createTokenFiles(m, n);
     }
-    if (files.map(dt => dt.name).includes('userTokens.txt')) {
-      const file = bucket.file('userTokens.txt');
-      const userTokensFile = await readData(file);
-      const userTokens = userTokensFile.split(',');
-      return userTokens;
+    if (!files.map(dt => dt.name).includes('userTokens.txt')) {
+      await createTokenFiles(m, n, 'user')
     }
-    else {
-      const userTokens = generateRandomStrings(n);
-      await saveFile(userTokens.join(','), bucket, 'userTokens.txt');
-      return userTokens;
+    if (!files.map(dt => dt.name).includes('adminTokens.txt')) {
+      await createTokenFiles(m, n, 'admin')
     }
   } catch (error) {
     console.log(error)
@@ -34,6 +28,7 @@ exports.donate = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).json({ code: 200 });
 
   const token = req.query.token ? req.query.token : req.headers.authorization ? req.headers.authorization.replace('Bearer ', '').trim() : null;
+  await getTokens();
   if (!token) return res.status(401).json({ message: 'Authorization failed!', code: 401 });
   const bucket = storage.bucket('donation-deleteme');
   const [files] = await bucket.getFiles();
