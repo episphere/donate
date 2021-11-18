@@ -11,5 +11,7 @@ Minimum token based web-stack infrastructure (server-side, nodejs) for data dona
 
 **Implementation notes** - the modern web stack has evolved to support consumer-facing execution models. Specifically, the web computing engine ([V8 engine](https://en.wikipedia.org/wiki/V8_(JavaScript_engine))) is now [dominant both in the client and server (nodejs) side of consumer-facing data infrastructure](http://www.modulecounts.com). As a consequence, the same code base can now run in both client and server sides of the development stack. This represents a particular challenge to IT units in biomedical informatics environments, where technology adoption is tied to the preservation of veted legacy infrastructure.
 
+
+---------------
 ## Serverless implementation using Cloud Function and Cloud Storage
 API documentation - https://documenter.getpostman.com/view/7490604/UVCCf44Q
