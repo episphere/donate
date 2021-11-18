@@ -2,7 +2,7 @@
   "name": "donate",
   "description": "Minimum token based web-stack infrastructure (server-side, nodejs) for data donation.",
   "version": "1.0.0",
-  "main": "donateServerless.js",
+  "main": "index.js",
   "devDependencies": {
     "@google-cloud/functions-framework": "^2.0.0"
   },
