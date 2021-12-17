@@ -2,6 +2,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const storage = admin.storage();
 const bucketName = process.env.GCSBucket;
+const bucket = storage.bucket(bucketName);
 
 const getTokens = async (m, n = 10000, files) => { // get tokens or create them first
   try {
@@ -28,7 +29,6 @@ exports.donate = async (req, res) => {
   const token = req.query.token ? req.query.token : req.headers.authorization ? req.headers.authorization.replace('Bearer ', '').trim() : null;
   try {
     if(!bucketName) return res.status(400).json({ message: "Invalid bucket name, please setup an environment variable 'GCSBucket' with the appropriate bucket!", code: 400 });
-    const bucket = storage.bucket(bucketName);
     const [files] = await bucket.getFiles();
     await getTokens(10, 10000, files);
     if (!token) return res.status(401).json({ message: 'Authorization failed!', code: 401 });
