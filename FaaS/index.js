@@ -66,7 +66,7 @@ exports.donate = async (req, res) => {
           return res.status(200).json({ message: 'Success!', code: 200, data: JSON.parse(data) });
         }
       }
-      else if (files.map(dt => dt.name).includes('adminTokens.txt')) {
+      if (files.map(dt => dt.name).includes('adminTokens.txt')) {
         const file = bucket.file('adminTokens.txt');
         const adminTokensFile = await readData(file);
         const adminTokens = adminTokensFile.split(',');
