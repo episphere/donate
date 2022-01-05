@@ -34,26 +34,39 @@ exports.donate = async (req, res) => {
     if (!token) return res.status(401).json({ message: 'Authorization failed!', code: 401 });
     if (req.method === 'POST') {
       if (files.map(dt => dt.name).includes('userTokens.txt')) {
-          const file = bucket.file('userTokens.txt');
-          const userTokensFile = await readData(file);
-          const userTokens = userTokensFile.split(',');
-          if (userTokens.includes(token)) {
-            const body = req.body;
+        const file = bucket.file('userTokens.txt');
+        const userTokensFile = await readData(file);
+        const userTokens = userTokensFile.split(',');
+        if (userTokens.includes(token)) {
+          const body = req.body;
 
-            if (Object.keys(body).length === 0) return res.status(400).json({ message: 'Body is empty!', code: 400 });
-            const fileName = body.fileName ? `data/${body.fileName}.json` : `data/${token}.json`
-            const data = body
-            if (data.fileName) delete data.fileName
-            await saveFile(data, bucket, fileName);
-            res.status(200).json({ message: 'Success!', code: 200 });
-          }
-          else return res.status(401).json({ message: 'Authorization failed!', code: 401 });
-        
+          if (Object.keys(body).length === 0) return res.status(400).json({ message: 'Body is empty!', code: 400 });
+          const fileName = body.fileName ? `data/${body.fileName}.json` : `data/${token}.json`
+          const data = body
+          if (data.fileName) delete data.fileName
+          await saveFile(data, bucket, fileName);
+          res.status(200).json({ message: 'Success!', code: 200 });
+        }
+        else return res.status(401).json({ message: 'Authorization failed!', code: 401 });
       }
     }
 
     if (req.method === 'GET') {
-      if (files.map(dt => dt.name).includes('adminTokens.txt')) {
+      if (files.map(dt => dt.name).includes('userTokens.txt')) {
+        const file = bucket.file('userTokens.txt');
+        const userTokensFile = await readData(file);
+        const userTokens = userTokensFile.split(',');
+        if (userTokens.includes(token)) {
+          const [lists] = await bucket.getFiles({ prefix: 'data/' });
+          const userFilesLists = lists.map(dt => dt.name.replace('data/', ''));
+          const fileName = token+'.json';
+          if (!userFilesLists.includes(fileName)) return res.status(404).json({ message: 'Data not found!', code: 404 });
+          const file = bucket.file(`data/${fileName}`);
+          const data = await readData(file);
+          return res.status(200).json({ message: 'Success!', code: 200, data: JSON.parse(data) });
+        }
+      }
+      else if (files.map(dt => dt.name).includes('adminTokens.txt')) {
         const file = bucket.file('adminTokens.txt');
         const adminTokensFile = await readData(file);
         const adminTokens = adminTokensFile.split(',');
@@ -69,8 +82,8 @@ exports.donate = async (req, res) => {
           }
           else return res.status(200).json({ message: 'Success!', code: 200, files: userFilesLists });
         }
-        else return res.status(401).json({ message: 'Authorization failed!', code: 401 });
       }
+      return res.status(401).json({ message: 'Authorization failed!', code: 401 });
     }
   } catch (error) {
     console.error(error)
