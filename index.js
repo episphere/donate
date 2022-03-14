@@ -1,6 +1,6 @@
 var http = require("http");
 var fs = require("fs");
-function getTokens(n=1000){ // get tokens or create them first
+function getTokens(n=10000){ // get tokens or create them first
   let tks=[]
   try{
     tks=fs.readFileSync('./data/tokens.txt','utf8').split(',')
@@ -19,7 +19,7 @@ function adminToken(){
   try {
     adminTk=fs.readFileSync('./data/admin.txt','utf8')
   } catch (err) {
-    fs.writeFileSync("./data/admin.txt",makeTokens(1,64)[0])
+    fs.writeFileSync("./data/admin.txt",makeTokens(10,64).join(','))
     adminTk=fs.readFileSync('./data/admin.txt','utf8')
   }
   return adminTk
@@ -33,12 +33,24 @@ function checkToken(url){
     let av = url.slice(url.indexOf('?')+1).match('token=[^&]*')
     if(av){ // a token was submitted
       let tkCandidate=av[0].slice(6)
-      if(tokens.includes(tkCandidate)||tkCandidate==adminTk){
+      if(tokens.includes(tkCandidate)||adminTk.match(tkCandidate)){
         tk=tkCandidate
       }
     }
   }
   return tk
+}
+
+function readCheck(x){ // check for read/write permissions
+  let y = JSON.parse(x) // if no block no need to re-stringify x
+  if(y.readWrite){
+    if(y.readWrite.read===false){
+      x=JSON.stringify({
+        error:'reading blocked'
+      })
+    }
+  }
+  return x
 }
 
 function makeTokens(n=1,m=32,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'){
@@ -61,7 +73,10 @@ http
         })
         req.on('end',function(){
           let bodyJSON=JSON.parse(body)
-          let filename=body.filename||`${tk}.json`
+          //let filename=body.filename||`${tk}.json` // what was I thinking ...
+          let filename=`${tk}.json`
+          //read first to make sure it can be overwritten
+          let oldData=fs.readFileSync(`data/${tk}.json`,'utf8')
           fs.writeFile(`./data/${filename}`,body,function(err,data){
             if (err) {
               //console.log('posted failed:',err);
@@ -74,7 +89,8 @@ http
         })
         //debugger
       }else{ // GET
-        if(tk==adminTk){ // Admin token
+        //if(tk==adminTk){ // Admin token
+        if(adminTk.match(tk)){ // Admin token
           let json = JSON.parse(`{"donate":"admin","msg":"admin stuff","files":${JSON.stringify(fs.readdirSync('data'))}}`)
           try{
             json.data=JSON.parse(fs.readFileSync(`data/${tk}.json`,'utf8'))
@@ -82,12 +98,12 @@ http
             //
           }
           res.end(JSON.stringify(json))
-        }else{
+        }else{  // user token
           fs.readFile(`data/${tk}.json`,'utf8',function(err,data){
             if(err){
               data = `{"donate":"get","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
             }
-            res.end(data)
+            res.end(readCheck(data))
           })
         }
           
