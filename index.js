@@ -91,11 +91,20 @@ http
       }else{ // GET
         //if(tk==adminTk){ // Admin token
         if(adminTk.match(tk)){ // Admin token
-          let json = JSON.parse(`{"donate":"admin","msg":"admin stuff","files":${JSON.stringify(fs.readdirSync('data'))}}`)
+          let json = JSON.parse(`{"donate":"admin","msg":"admin act at ${Date()}","files":${JSON.stringify(fs.readdirSync('data'))}}`)
           try{
             json.data=JSON.parse(fs.readFileSync(`data/${tk}.json`,'utf8'))
           }catch(err){
             //
+          }
+          let doc = req.url.match(/doc=([^&=]+)/)[1]
+          if(doc){
+            json.docId=doc
+            try{
+              json.doc=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
+            }catch(err){
+              json.error=err
+            }      
           }
           res.end(JSON.stringify(json))
         }else{  // user token
