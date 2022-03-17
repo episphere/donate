@@ -65,7 +65,7 @@ http
     let tk=checkToken(req.url)
     res.setHeader("Access-Control-Allow-Origin", "*")
     //res.setrHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    if(tk){ // if valid token provided
+    if(tk){ // if valid user token provided
       if(req.method=="POST"){
         let body=''
         req.on('data',function(data){
@@ -122,7 +122,8 @@ http
           if(doc){
             json.docId=doc
             try{
-              json.doc=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
+              //json.doc=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
+              json=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
             }catch(err){
               json.error=err
             }      
