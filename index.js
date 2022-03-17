@@ -79,20 +79,36 @@ http
           let oldData
           try{
             oldData=fs.readFileSync(`data/${tk}.json`,'utf8')
-          }catch(err){
-            
-          }
-          debugger
-          //let oldData=fs.readFileSync(`data/${tk}.json`,'utf8')
-          fs.writeFile(`./data/${filename}`,body,function(err,data){
-            if (err) {
-              //console.log('posted failed:',err);
-              res.end("POSTing failed")
-            }else{
-              res.end(`{"msg":"successufly posted at ${Date()}","donate":"post"}`)
+          }catch(err){}
+          if(oldData){
+            oldData=JSON.parse(oldData)
+            if(oldData.readWrite){
+              if(oldData.readWrite.write===false){
+                res.end(JSON.stringify({
+                  error:"writing blocked",
+                  msg:"this file already exists and is write-blocked"
+                }))
+              }else{
+                fs.writeFile(`./data/${filename}`,body,function(err,data){
+                  if (err) {
+                    //console.log('posted failed:',err);
+                    res.end("POSTing failed")
+                  }else{
+                    res.end(`{"msg":"successufly posted at ${Date()}"}`)
+                  }
+                })
+              }
+            }else{ // no readWrite, go ahead
+              fs.writeFile(`./data/${filename}`,body,function(err,data){
+                  if (err) {
+                    //console.log('posted failed:',err);
+                    res.end("POSTing failed")
+                  }else{
+                    res.end(`{"msg":"successufly posted at ${Date()}"}`)
+                  }
+                })
             }
-            //console.log(`posted to ${filename}:\n`,bodyJSON)
-          })
+          }
         })
         //debugger
       }else{ // GET
@@ -101,9 +117,7 @@ http
           let json = JSON.parse(`{"donate":"admin","msg":"admin act at ${Date()}","files":${JSON.stringify(fs.readdirSync('data'))}}`)
           try{
             json.data=JSON.parse(fs.readFileSync(`data/${tk}.json`,'utf8'))
-          }catch(err){
-            //
-          }
+          }catch(err){}
           let doc = req.url.match(/doc=([^&=]+)/)[1]
           if(doc){
             json.docId=doc
