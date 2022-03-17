@@ -76,7 +76,14 @@ http
           //let filename=body.filename||`${tk}.json` // what was I thinking ...
           let filename=`${tk}.json`
           //read first to make sure it can be overwritten
-          let oldData=fs.readFileSync(`data/${tk}.json`,'utf8')
+          let oldData
+          try{
+            oldData=fs.readFileSync(`data/${tk}.json`,'utf8')
+          }catch(err){
+            
+          }
+          debugger
+          //let oldData=fs.readFileSync(`data/${tk}.json`,'utf8')
           fs.writeFile(`./data/${filename}`,body,function(err,data){
             if (err) {
               //console.log('posted failed:',err);
