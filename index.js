@@ -130,14 +130,15 @@ http.createServer(function(req, res) {
             //if(tk==adminTk){ // Admin token
             if (adminTk.match(tk)) {
                 // Admin token
-                let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data'))}}`)
-                //debugger
+                let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                debugger
                 try {
                     json.data = JSON.parse(fs.readFileSync(`data/${tk}.json`, 'utf8'))
                 } catch (err) {}
-                let doc = req.url.match(/doc=([^&=]+)/)[1]
+                debugger
+                let doc = req.url.match(/doc=([^&=]+)/)
                 if (doc) {
-                    json.docId = doc
+                    json.docId = doc[1]
                     try {
                         //json.doc=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
                         json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
@@ -150,7 +151,7 @@ http.createServer(function(req, res) {
                 // user token
                 fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
                     if (err) {
-                        data = `{"donate":"get","error":"${err}","msg":"A valid token was provided but with no data. Some data needs to be POSTed for this token first.","date":"${Date()}"}`
+                        data = `{"donate":"get","error":"${err}","msg":"A valid token was provided, but with no data associated with it. To retrieve (GET) data you have to POST it first","date":"${Date()}"}`
                     }
                     res.end(readCheck(data))
                 })
