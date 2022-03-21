@@ -71,12 +71,12 @@ http.createServer(function(req, res) {
     if (tk) {
         // if valid user token provided
         if (req.method == "POST") {
-            let body = ''
+            let bodyData = ''
             req.on('data', function(data) {
-                body += data
+                bodyData += data
             })
             req.on('end', function() {
-                let bodyJSON = JSON.parse(body)
+                let bodyJSON = JSON.parse(bodyData)
                 //let filename=body.filename||`${tk}.json` // what was I thinking ...
                 let filename = `${tk}.json`
                 //read first to make sure it can be overwritten
@@ -93,7 +93,7 @@ http.createServer(function(req, res) {
                                 msg: "this file already exists and is write-blocked"
                             }))
                         } else {
-                            fs.writeFile(`./data/${filename}`, body, function(err, data) {
+                            fs.writeFile(`./data/${filename}`, bodyData, function(err, data) {
                                 if (err) {
                                     //console.log('posted failed:',err);
                                     res.end("POSTing failed")
@@ -104,7 +104,7 @@ http.createServer(function(req, res) {
                         }
                     } else {
                         // no readWrite, go ahead
-                        fs.writeFile(`./data/${filename}`, body, function(err, data) {
+                        fs.writeFile(`./data/${filename}`, bodyData, function(err, data) {
                             if (err) {
                                 //console.log('posted failed:',err);
                                 res.end("POSTing failed")
@@ -114,7 +114,7 @@ http.createServer(function(req, res) {
                         })
                     }
                 }else{ // no oldData
-                    fs.writeFile(`./data/${filename}`, body, function(err, data) {
+                    fs.writeFile(`./data/${filename}`, bodyData, function(err, data) {
                         if (err) {
                             //console.log('posted failed:',err);
                             res.end("POSTing failed")
@@ -128,19 +128,21 @@ http.createServer(function(req, res) {
         } else {
             // GET
             //if(tk==adminTk){ // Admin token
+            //debugger
             if (adminTk.match(tk)) {
                 // Admin token
                 let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
-                debugger
                 try {
                     json.data = JSON.parse(fs.readFileSync(`data/${tk}.json`, 'utf8'))
                 } catch (err) {}
-                debugger
                 let doc = req.url.match(/doc=([^&=]+)/)
+                //debugger
                 if (doc) {
+                    debugger
                     json.docId = doc[1]
                     try {
                         //json.doc=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
+                        //debugger
                         json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
                     } catch (err) {
                         json.error = err
