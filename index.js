@@ -154,17 +154,21 @@ http.createServer(function(req, res) {
         if (adminTk.match(tk)) { // if not donor but Admin token 
             // Admin token
             if(req.method=="GET"){ // Admin GET
-                let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
-                json.data=readExists(`data/${tk}.admin`)
+                let json={}
+                //let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                //json.data=readExists(`data/${tk}.admin`)
                 let doc = req.url.match(/doc=([^&=]+)/)
-                //debugger 
-                if (doc) {
+                //debugger
+                if (doc) { 
                     json.docId = doc[1]
                     try {
-                        json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
+                        JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
                     } catch (err) {
-                        json.error = err
+                        json.msg="no donor file created for that token"
+                        json.error=err
                     }
+                } else {
+                    debugger
                 }
                 res.end(JSON.stringify(json))
             }else{ // Admin POST
