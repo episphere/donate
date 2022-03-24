@@ -29,17 +29,25 @@ function adminToken() {
 var adminTk = adminToken()
 
 //var tokens = fs.readFileSync('./data/tokens.txt','utf8').split(',')
-function checkToken(url) {
+function checkToken(url) { // donor token
     let tk = false
     if (url.indexOf('?') > -1) {
         let av = url.slice(url.indexOf('?') + 1).match('token=[^&]*')
         if (av) {
             // a token was submitted
             let tkCandidate = av[0].slice(6)
-            if (tokens.includes(tkCandidate) || adminTk.match(tkCandidate)) {
+            //if (tokens.includes(tkCandidate)){ //|| adminTk.match(tkCandidate)) {
+            if (tokens.includes(tkCandidate)){
                 tk = tkCandidate
             }
         }
+    }
+    return tk
+}
+function getTokenFromURL(url){
+    let tk
+    if(url.match(/token=[^?&=]+/)){
+        tk=url.match(/token=([^?&=]+)/)[1]
     }
     return tk
 }
@@ -132,48 +140,40 @@ http.createServer(function(req, res) {
                 }
             })
             //debugger
-        } else {
-            debugger
-            if (adminTk.match(tk)) { // Admin token
-                // Admin token
-                if(req.method=="GET"){ // Admin GET
-                    let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
-                    json.data=readExists(`data/${tk}.admin`)
-                    let doc = req.url.match(/doc=([^&=]+)/)
-                    //debugger
-                    if (doc) {
-                        json.docId = doc[1]
-                        try {
-                            json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
-                        } catch (err) {
-                            json.error = err
-                        }
-                    }
-                    res.end(JSON.stringify(json))
-                }else{ // Admin POST
-                    debugger
+        } else { // DONOR GET
+            fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
+                if (err) {
+                    data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To retrieve (GET) data you have to POST it first","date":"${Date()}"}`
                 }
-                
-            } else {
-                fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
-                    if (err) {
-                        data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To retrieve (GET) data you have to POST it first","date":"${Date()}"}`
-                    }
-                    res.end(readCheck(data))
-                })
-            }
-
-            //res.write(`Hello World from Jonas :-), you have provided a valid token at ${Date()}`); //write a response to the client
-            //res.end(); //end the response
+                res.end(readCheck(data))
+            })
         }
     } else {
-        // no valid token
-        //res.write(`no valid token provided`); //write a response to the client
-        // check if this is admin
-        res.end(`{"donate":"invalid","msg":"no valid token provided","date":"${Date()}"}`);
-        //end the response
-
+        tk = getTokenFromURL(req.url)
+        //debugger
+        if (adminTk.match(tk)) { // if not donor but Admin token 
+            // Admin token
+            if(req.method=="GET"){ // Admin GET
+                let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                json.data=readExists(`data/${tk}.admin`)
+                let doc = req.url.match(/doc=([^&=]+)/)
+                //debugger 
+                if (doc) {
+                    json.docId = doc[1]
+                    try {
+                        json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
+                    } catch (err) {
+                        json.error = err
+                    }
+                }
+                res.end(JSON.stringify(json))
+            }else{ // Admin POST
+                debugger
+                res.end(JSON.stringify({msg:"admin post being debugged"}))
+            }           
+        } else { // if neither donor nor admin 
+            res.end(`{"donate":"invalid","msg":"no valid token provided","date":"${Date()}"}`);
+        }
     }
-
 }).listen(3000);
-//the server object listens on port 8080
+
