@@ -1,6 +1,6 @@
 var http = require("http");
 var fs = require("fs");
-function getTokens(n=10000) {
+function getTokens(n=1000) {
     // get tokens or create them first
     let tks = []
     try {
@@ -21,7 +21,7 @@ function adminToken() {
     try {
         adminTk = fs.readFileSync('./data/admin.txt', 'utf8')
     } catch (err) {
-        fs.writeFileSync("./data/admin.txt", makeTokens(10, 64).join(','))
+        fs.writeFileSync("./data/admin.txt", makeTokens(1, 64).join(','))
         adminTk = fs.readFileSync('./data/admin.txt', 'utf8')
     }
     return adminTk
@@ -62,6 +62,13 @@ function makeTokens(n=1, m=32, str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGH
     return [...Array(n)].map(_=>[...Array(m)].map(_=>str[Math.floor(Math.random() * 62)]).join(''))
 }
 
+function readExists(filename){
+    let json
+    try {json = JSON.parse(fs.readFileSync(filename, 'utf8'))
+    } catch (err) {}
+    return json
+}
+
 //create a server object:
 http.createServer(function(req, res) {
     //console.log(`${Date()}\n`,req)
@@ -90,7 +97,7 @@ http.createServer(function(req, res) {
                         if (oldData.readWrite.write === false) {
                             res.end(JSON.stringify({
                                 error: "writing blocked",
-                                msg: "this file already exists and is write-blocked"
+                                msg: "file exists but is write-blocked"
                             }))
                         } else {
                             fs.writeFile(`./data/${filename}`, bodyData, function(err, data) {
@@ -126,34 +133,31 @@ http.createServer(function(req, res) {
             })
             //debugger
         } else {
-            // GET
-            //if(tk==adminTk){ // Admin token
-            //debugger
-            if (adminTk.match(tk)) {
+            debugger
+            if (adminTk.match(tk)) { // Admin token
                 // Admin token
-                let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
-                try {
-                    json.data = JSON.parse(fs.readFileSync(`data/${tk}.json`, 'utf8'))
-                } catch (err) {}
-                let doc = req.url.match(/doc=([^&=]+)/)
-                //debugger
-                if (doc) {
-                    debugger
-                    json.docId = doc[1]
-                    try {
-                        //json.doc=JSON.parse(fs.readFileSync(`data/${json.docId}.json`,'utf8'))
-                        //debugger
-                        json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
-                    } catch (err) {
-                        json.error = err
+                if(req.method=="GET"){ // Admin GET
+                    let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                    json.data=readExists(`data/${tk}.admin`)
+                    let doc = req.url.match(/doc=([^&=]+)/)
+                    //debugger
+                    if (doc) {
+                        json.docId = doc[1]
+                        try {
+                            json = JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
+                        } catch (err) {
+                            json.error = err
+                        }
                     }
+                    res.end(JSON.stringify(json))
+                }else{ // Admin POST
+                    debugger
                 }
-                res.end(JSON.stringify(json))
+                
             } else {
-                // user token
                 fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
                     if (err) {
-                        data = `{"donate":"get","error":"${err}","msg":"A valid token was provided, but with no data associated with it. To retrieve (GET) data you have to POST it first","date":"${Date()}"}`
+                        data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To retrieve (GET) data you have to POST it first","date":"${Date()}"}`
                     }
                     res.end(readCheck(data))
                 })
