@@ -1,6 +1,6 @@
 var http = require("http");
 var fs = require("fs");
-function getTokens(n=1000) {
+function getTokens(n=10) {
     // get tokens or create them first
     let tks = []
     try {
