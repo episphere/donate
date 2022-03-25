@@ -4,7 +4,7 @@ async function get(url='http://localhost:3000',format='text'){
     return (await fetch(url))[format]()
 }
 
-async function post(url='http://localhost:3000',data={hello:'world!',at:Date()},format='text'){
+async function post(url='http://localhost:3000',data={created:Date()},format='text'){
     return (await fetch(url,{
         method:"POST",
         body:JSON.stringify(data)

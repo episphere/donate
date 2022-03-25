@@ -162,21 +162,38 @@ http.createServer(function(req, res) {
                 if (doc) { 
                     json.docId = doc[1]
                     try {
-                        JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
+                        json=JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
                     } catch (err) {
-                        json.msg="no donor file created for that token"
+                        json.msg="Either no data file was created for that token or the token is not valid. Try to get it directly to find out which case it is."
                         json.error=err
                     }
-                } else {
-                    debugger
+                } else { // admin harvest
+                    json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                    json.data=readExists(`data/${tk}.admin`)
                 }
                 res.end(JSON.stringify(json))
             }else{ // Admin POST
-                debugger
-                res.end(JSON.stringify({msg:"admin post being debugged"}))
+                // get body
+                let bodyData = ''
+                req.on('data', function(data) {
+                    bodyData += data
+                })
+                req.on('end', function() {
+                    let bodyJSON = JSON.parse(bodyData)
+                    // check if this targets a doc
+                    let doc = req.url.match(/doc=([^&=]+)/)
+                    if(doc){
+                        let docID=doc[1]
+                        fs.writeFileSync(`./data/${docID}.json`,bodyData)
+                        res.end(JSON.stringify({msg:"admin POSTing to donor document"}))
+                    }else{
+                        fs.writeFileSync(`./data/${tk}.admin`,bodyData)
+                        res.end(JSON.stringify({msg:"POSTing to admin"}))
+                    }
+                })
             }           
         } else { // if neither donor nor admin 
-            res.end(`{"donate":"invalid","msg":"no valid token provided","date":"${Date()}"}`);
+            res.end(`{"msg":"no valid token provided","date":"${Date()}"}`);
         }
     }
 }).listen(3000);
