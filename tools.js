@@ -29,4 +29,10 @@ function getParms(str=location.search+location.hash){
   return parms
 }
 
-export {get,post,makeTokens,getParms}
+// Create and append new donor and admin tokens 
+async function appendToken(role="donor",parm={n:1,L:32},url='http://localhost:3000'){ 
+  url+=`?appendToken=${role}&num=${parm.n}&length=${parm.L}`
+  debugger
+}
+
+export {get,post,makeTokens,getParms,appendToken}
