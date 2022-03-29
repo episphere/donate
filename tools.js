@@ -30,8 +30,8 @@ function getParms(str=location.search+location.hash){
 }
 
 // Create and append new donor and admin tokens 
-async function appendToken(role="donor",parm={n:1,L:32},url='http://localhost:3000'){ 
-  url+=`?appendToken=${role}&num=${parm.n}&length=${parm.L}`
+async function appendToken(tk,parm={n:1,L:32},role="donor",url='http://localhost:3000'){ 
+  url+=`?token=${tk}&role=${role}&num=${parm.n}&length=${parm.L}`
   debugger
 }
 
