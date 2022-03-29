@@ -163,8 +163,7 @@ http.createServer(function(req, res) {
             })
         }
     } else {
-        tk = getTokenFromURL(req.url)
-        debugger
+        tk = getTokenFromURL(req.url)||new RegExp(/^$/g)
         if (adminTk.match(tk)) { // if not donor but Admin token 
             // Admin token
             if(req.method=="GET"){ // Admin GET
@@ -211,4 +210,3 @@ http.createServer(function(req, res) {
         }
     }
 }).listen(3000);
-
