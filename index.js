@@ -15,6 +15,18 @@ function getTokens(n=10) {
 }
 var tokens = getTokens()
 
+function getParms(str=req.url){
+  let parms={}
+  let arr = str.match(/[^#?&=]*=[^#?&=]*/g)
+  if(arr){
+    arr.forEach(a=>{
+      a=a.split('=')
+      parms[a[0]]=a[1]
+    })
+  }
+  return parms
+}
+
 function adminToken() {
     // check for admin token
     let adminTk
@@ -83,6 +95,8 @@ http.createServer(function(req, res) {
     let tk = checkToken(req.url)
     res.setHeader("Access-Control-Allow-Origin", "*")
     //res.setrHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    //debugger
+    let parms = getParms(req.url)
     if (tk) {
         // if valid user token provided
         if (req.method == "POST") {
@@ -150,7 +164,7 @@ http.createServer(function(req, res) {
         }
     } else {
         tk = getTokenFromURL(req.url)
-        //debugger
+        debugger
         if (adminTk.match(tk)) { // if not donor but Admin token 
             // Admin token
             if(req.method=="GET"){ // Admin GET
