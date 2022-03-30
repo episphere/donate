@@ -2,7 +2,7 @@
 
 var serviceUrl = 'http://localhost:3000'
 
-function setUrl(url='http://localhost:3000'){ // set default url as something else
+function setUrl(url=serviceUrl){ // set default url as something else
   serviceUrl=url
   return url
 }
