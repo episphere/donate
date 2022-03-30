@@ -1,7 +1,7 @@
 
 (async function(){ // loading ES6 module for script tag
-    donation = await import('./methods.js')    
+    dona = await import('./methods.js')    
 })()
 
 
-console.log("donation.js loaded")
+console.log("dona loaded from donation.js")
