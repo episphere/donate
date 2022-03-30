@@ -2,6 +2,11 @@
 
 var serviceUrl = 'http://localhost:3000'
 
+function setUrl(url='http://localhost:3000'){ // set default url as something else
+  serviceUrl=url
+  return url
+}
+
 async function get(url=serviceUrl,format='text'){
     if(!url.match(/[:]/)){ // url is a token
       url = `${serviceUrl}?token=${url}`
@@ -53,4 +58,4 @@ async function newToken(tk,parm={n:1},role="donor",url=serviceUrl){
   return await get(url)
 }
 
-export {get,post,makeTokens,getParms,newToken}
+export {get,post,makeTokens,getParms,newToken,setUrl}
