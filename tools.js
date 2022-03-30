@@ -1,14 +1,22 @@
-//repl = function(){}
+// donation SDK methods
 
-async function get(url='http://localhost:3000',format='text'){
+var serviceUrl = 'http://localhost:3000'
+
+async function get(url=serviceUrl,format='text'){
+    if(!url.match(/[:]/)){ // url is a token
+      url = `${serviceUrl}?token=${url}`
+    }
     return (await fetch(url))[format]()
 }
 
-async function post(url='http://localhost:3000',data={created:Date()},format='text'){
-    return (await fetch(url,{
-        method:"POST",
-        body:JSON.stringify(data)
-    }))[format]()
+async function post(url=serviceUrl,data={created:Date()},format='text'){
+  if(!url.match(/[:]/)){ // url is a token
+      url = `${serviceUrl}?token=${url}`
+  }
+  return (await fetch(url,{
+      method:"POST",
+      body:JSON.stringify(data)
+  }))[format]()
 }
 
 function makeTokens(n=1,m=16,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'){
@@ -30,9 +38,19 @@ function getParms(str=location.search+location.hash){
 }
 
 // Create and append new donor and admin tokens 
-async function appendToken(tk,parm={n:1,L:32},role="donor",url='http://localhost:3000'){ 
-  url+=`?token=${tk}&role=${role}&num=${parm.n}&length=${parm.L}`
-  debugger
+async function newToken(tk,parm={n:1},role="donor",url=serviceUrl){ 
+  if(typeof(parm)=='number'){ // if parm is passing the number of tokens, an integer
+    parm={n:parm}
+  }
+  if(!parm.L){
+    if(role=="donor"){
+      parm.L=32
+    } else { // admin
+      parm.L=64
+    }
+  }
+  url+=`?token=${tk}&role=${role}&num=${parm.n}&lgh=${parm.L}`
+  return await get(url)
 }
 
-export {get,post,makeTokens,getParms,appendToken}
+export {get,post,makeTokens,getParms,newToken}

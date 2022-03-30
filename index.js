@@ -95,7 +95,7 @@ http.createServer(function(req, res) {
     let tk = checkToken(req.url)
     res.setHeader("Access-Control-Allow-Origin", "*")
     //res.setrHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    //debugger
+    //debugger 
     let parms = getParms(req.url)
     if (tk) {
         // if valid user token provided
@@ -166,26 +166,42 @@ http.createServer(function(req, res) {
         tk = getTokenFromURL(req.url)||new RegExp(/^$/g)
         if (adminTk.match(tk)) { // if not donor but Admin token 
             // Admin token
+            parms
             if(req.method=="GET"){ // Admin GET
                 let json={}
                 //let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
                 //json.data=readExists(`data/${tk}.admin`)
-                let doc = req.url.match(/doc=([^&=]+)/)
+                //let doc = req.url.match(/doc=([^&=]+)/)
                 //debugger
-                if (doc) { 
-                    json.docId = doc[1]
+                if (parms.doc) { 
+                    json.docId = parms.doc
                     try {
                         json=JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
                     } catch (err) {
                         json.msg="Either no data file was created for that token or the token is not valid. Try to get it directly to find out which case it is."
                         json.error=err
                     }
-                } else { // admin harvest
-                    json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
-                    json.data=readExists(`data/${tk}.admin`)
+                } else { // admin harvest or token insert
+                    if(!parms.role){ // harvest
+                        json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                        json.data=readExists(`data/${tk}.admin`)
+                    }else{ // token insert
+                        json.newTokens = makeTokens(parseInt(parms.num),parseInt(parms.lgh))
+                        json.role = parms.role
+                        json.msg = `${parms.num} new ${parms.lgh} character-long ${parms.role} tokens created`
+                        if(parms.role=='admin'){
+                            fs.appendFileSync('data/admin.txt', `,${json.newTokens.join(',')}`);
+                            adminTk = adminToken() // updating the global admin token list in memory
+                        } else { // role donor
+                            fs.appendFileSync('data/tokens.txt', `,${json.newTokens.join(',')}`);
+                            tokens = getTokens() // updating the global donor token list in memory
+                        }
+                        
+                    }
+                        
                 }
                 res.end(JSON.stringify(json))
-            }else{ // Admin POST
+            }else{ // Admin POST 
                 // get body
                 let bodyData = ''
                 req.on('data', function(data) {
