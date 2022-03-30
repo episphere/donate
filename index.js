@@ -127,7 +127,7 @@ http.createServer(function(req, res) {
                                     //console.log('posted failed:',err);
                                     res.end("POSTing failed")
                                 } else {
-                                    res.end(`{"msg":"successufly posted at ${Date()}"}`)
+                                    res.end(`{"msg":"successufly posted ${Date()}"}`)
                                 }
                             })
                         }
@@ -157,7 +157,7 @@ http.createServer(function(req, res) {
         } else { // DONOR GET
             fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
                 if (err) {
-                    data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To retrieve (GET) data you have to POST it first","date":"${Date()}"}`
+                    data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To GET data you have to POST it first"}`
                 }
                 res.end(readCheck(data))
             })
