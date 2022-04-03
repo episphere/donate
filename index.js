@@ -8,6 +8,7 @@ function getTokens(n=10) {
     } catch (err) {
         // tokens not created yet, do it first
         fs.mkdirSync('data')
+        fs.mkdirSync('oauth')
         fs.writeFileSync("./data/tokens.txt", [...Array(n)].map(_=>makeTokens(1, 32)).join(','))
         tks = fs.readFileSync('./data/tokens.txt', 'utf8').split(',')
     }
