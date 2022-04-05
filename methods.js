@@ -58,8 +58,8 @@ async function newToken(tk,parm={n:1},role="donor",url=serviceUrl){
   return await get(url)
 }
 
-async function setOauth(){
-  
+async function setOauth(tk){
+  return await get(tk)
 }
 
-export {get,post,makeTokens,getParms,newToken,setUrl}
+export {get,post,makeTokens,getParms,newToken,setUrl,setOauth}

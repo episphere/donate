@@ -2,4 +2,5 @@ data.*
 data/*
 oauth.*
 oauth/*
+node_*
 .replit

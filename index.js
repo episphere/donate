@@ -1,5 +1,7 @@
 var http = require("http");
 var fs = require("fs");
+//import fetch from 'node-fetch';
+var fetch = require("node-fetch") // not needed after ver 17.5
 function getTokens(n=10) {
     // get tokens or create them first
     let tks = []
@@ -156,12 +158,24 @@ http.createServer(function(req, res) {
             })
             //debugger
         } else { // DONOR GET
-            fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
-                if (err) {
-                    data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To GET data you have to POST it first"}`
-                }
-                res.end(readCheck(data))
-            })
+            if(parms.bearer){
+                parms.clientId=parms.clientId||"1061219778575-61rsuqnukha35jgbt2hkl8de17sehf4c.apps.googleusercontent.com"
+                parms.authURL=parms.authURL||"https://accounts.google.com/o/oauth2/auth"
+                fetch('http://localhost:3000').then(x=>x.json().then(y=>{
+                    console.log(y)
+                    debugger 
+                }))
+                //debugger
+                res.end('debugging')
+            } else {
+                fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
+                    if (err) {
+                        data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To GET data you have to POST it first"}`
+                    }
+                    res.end(readCheck(data))
+                })
+            }
+                
         }
     } else {
         tk = getTokenFromURL(req.url)||new RegExp(/^$/g)
@@ -173,7 +187,7 @@ http.createServer(function(req, res) {
                 //let json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
                 //json.data=readExists(`data/${tk}.admin`)
                 //let doc = req.url.match(/doc=([^&=]+)/)
-                //debugger
+                //debugger 
                 if (parms.doc) { 
                     json.docId = parms.doc
                     try {
