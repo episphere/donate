@@ -58,8 +58,22 @@ async function newToken(tk,parm={n:1},role="donor",url=serviceUrl){
   return await get(url)
 }
 
-async function setOauth(tk){
-  return await get(tk)
+async function setOauth(tkAuth,authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){
+  // tkAuth includes both user and bearer token
+  // for example setOauth('token=4FQS...&bearer=ya29.A0ARr...')
+  // and can also include the authURL
+  if(!tkAuth.match(':')){
+    tkAuth=serviceUrl+'/?'+tkAuth+'&authURL='+authURL
+  }
+  return await get(tkAuth)
 }
 
-export {get,post,makeTokens,getParms,newToken,setUrl,setOauth}
+async function getOauth(bearer,authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){ // 
+  let url=bearer
+  if(!url.match(':')){
+    url=serviceUrl+'/?getOauth='+bearer+'&authURL='+authURL
+  }
+  return await get(url)
+}
+
+export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth}

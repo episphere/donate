@@ -159,14 +159,19 @@ http.createServer(function(req, res) {
             //debugger
         } else { // DONOR GET
             if(parms.bearer){
-                parms.clientId=parms.clientId||"1061219778575-61rsuqnukha35jgbt2hkl8de17sehf4c.apps.googleusercontent.com"
-                parms.authURL=parms.authURL||"https://accounts.google.com/o/oauth2/auth"
-                fetch('http://localhost:3000').then(x=>x.json().then(y=>{
+                //parms.clientId=parms.clientId||"1061219778575-61rsuqnukha35jgbt2hkl8de17sehf4c.apps.googleusercontent.com"
+                //parms.authURL=parms.authURL||"https://accounts.google.com/o/oauth2/auth"
+                parms.authURL=parms.authURL||"https://www.googleapis.com/oauth2/v1/userinfo?alt=json"
+                fetch(parms.authURL,{
+                    headers:{
+                        authorization:'Bearer '+parms.bearer
+                    }
+                }).then(x=>x.json().then(y=>{
                     console.log(y)
-                    debugger 
+                    y.token=parms.token
+                    fs.writeFileSync(`./oauth/${y.id}.json`,JSON.stringify(y))
+                    res.end(JSON.stringify({msg:"OAuth linked to token"}))
                 }))
-                //debugger
-                res.end('debugging')
             } else {
                 fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
                     if (err) {
