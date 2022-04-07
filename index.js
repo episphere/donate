@@ -93,14 +93,24 @@ function readExists(filename){
 }
 
 //create a server object:
-http.createServer(function(req, res) {
+http.createServer(async function(req, res) {
     //console.log(`${Date()}\n`,req)
     let tk = checkToken(req.url)
     res.setHeader("Access-Control-Allow-Origin", "*")
     //res.setrHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     //debugger 
     let parms = getParms(req.url)
-    if (tk) {
+    if(parms.getOauth){ // get token from oauth
+        let x = await (await fetch(parms.authURL,{
+            headers:{
+                authorization:'Bearer '+parms.getOauth
+            }
+        })).json()
+        // extract token from oauth
+        y = fs.readFileSync(`oauth/${x.id}.json`, 'utf8')
+        //y = JSON.parse(y)
+        res.end(y)
+    }else if (tk) { // token is being provided directly
         // if valid user token provided
         if (req.method == "POST") {
             let bodyData = ''
@@ -167,12 +177,21 @@ http.createServer(function(req, res) {
                         authorization:'Bearer '+parms.bearer
                     }
                 }).then(x=>x.json().then(y=>{
-                    console.log(y)
-                    y.token=parms.token
+                    //console.log(y)
+                    // disable invite token, first generate a new none and rename existing user data file
+                    y.token = makeTokens().join()
+                    try{ // rename data file if it exists
+                        fs.renameSync(`./data/${parms.token}.json`,`./data/${y.token}.json`)
+                    }catch(err){
+                        console.log(`no need to rename ${y.token}.json, it doesn't exist`)
+                    }
+                    // replace old token by new one in list of tokens, maybe this could be async ...
+                    fs.writeFileSync(`./data/tokens.txt`,fs.readFileSync(`./data/tokens.txt`,'utf8').replace(parms.token,y.token))
+                    // save oauth link file with new token
                     fs.writeFileSync(`./oauth/${y.id}.json`,JSON.stringify(y))
-                    res.end(JSON.stringify({msg:"OAuth linked to token"}))
+                    res.end(JSON.stringify({msg:`OAuth ${y.id} linked to token ${y.token}`}))
                 }))
-            } else {
+            } else { // none of the above
                 fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
                     if (err) {
                         data = `{"error":"${err}","msg":"A valid token was provided, but with no data associated with it. To GET data you have to POST it first"}`
