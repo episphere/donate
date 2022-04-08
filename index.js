@@ -222,7 +222,7 @@ http.createServer(async function(req, res) {
                     }
                 } else { // admin harvest or token insert
                     if(!parms.role){ // harvest
-                        json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))}}`)
+                        json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))},"oauth":${JSON.stringify(fs.readdirSync('oauth').filter(x=>x.match(/.json$/)))}}`)
                         json.data=readExists(`data/${tk}.admin`)
                     }else{ // token insert
                         json.newTokens = makeTokens(parseInt(parms.num),parseInt(parms.lgh))
