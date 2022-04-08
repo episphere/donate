@@ -5,24 +5,26 @@
 <script src="donation.js"></script>
 </head>
 <body>
-<h1>epiDonate <sup style="font-size:small;color:navy"> [<a href="https://github.com/episphere/donate" target="_blank">code</a>] </sup></h1>
+<h1>epiDonate <sup style="font-size:small;color:navy"> [<a href="https://github.com/episphere/donate" target="_blank">code</a>] [<a href="https://github.com/episphere/donate/wiki" target="_blank">docs</a>] [<a href="#" target="_blank">demo</a>] </sup></h1>
 <div id="info">
 <p><b style="color:brown">Problem -</b>
 Many cohort studies require mechanisms for data donation. 
 Typical examples are the donation of consumer genomics and wearable sensor data. 
 </p>
 <p>
-It is, however, not reasonable to expect participants to have the computational skills, or the patience, to handle the data extraction and submission on their own.
-Instead, the data donnation should be integrated in the cohort Web Application such that the data can be retireved by engaging the consumer-facing APIs on behalf of the participant.
+It is, however, not reasonable to expect participants to have the computational skills, or the patience, to handle the data extraction and submission on their own. 
+It is also not reasonable that epidemiologists are taken hostage by the IT budgets of customized closed-source software development. 
+Instead, we argue, the data donnation should be orchestrated by cohort study Web Applications that operate a core of open-source services.
 </p>
 <p><p><b style="color:brown">Solution -</b>
-A web service was developed to manage individual invitation tokens for data donation.
-This way, the donation is reduced to clicking on a donation button in the same App that acquires the data on behalf of the devide owner.
+A minimalist public open-source web service was developed to manage individual invitation tokens that the study participant associates with an <a href="https://episphere.github.io/oauth" target="_blank">OAuth2 identity</a>.
+
 </p>
 <p>
-The design of the web service explores what could be a Minimal infrastructure for data donation using the modern Web Stack. 
-The API only needs two commands to handle the transactions, get and post, matching the HTTP GET and POST methods. 
-The service automatically creates user and admin tokens stored in a gitignored data folder automatically created to hold them.
+The epiDonate web service is a minimalist implementation of the data infrastructure design we identified for <i><b>NIH Connect for Cancer Prevention Study</b></i> (<a href="https://dceg.cancer.gov/research/who-we-study/cohorts/connect" target="_blank">CONNECT</a>).
+This Minimal infrastructure for data donation uses the modern Web Stack operating a single HTTP REST API that handles transactions on behalf and withing the governance of the participant. 
+Specifically, it relies on a tabulation of HTTP GET and POST methods with user-defined read/write permissions. 
+The service, in the public domain and with open-source at GitHub, automatically creates user and admin tokens stored in a gitignored data folder.
 </p>
 </div>
 <p>
