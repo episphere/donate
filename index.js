@@ -179,6 +179,7 @@ http.createServer(async function(req, res) {
                 }).then(x=>x.json().then(y=>{
                     //console.log(y)
                     // disable invite token, first generate a new none and rename existing user data file
+                    y.oldToken=parms.token // in case system crahses halfway
                     y.token = makeTokens().join()
                     try{ // rename data file if it exists
                         fs.renameSync(`./data/${parms.token}.json`,`./data/${y.token}.json`)
@@ -216,6 +217,14 @@ http.createServer(async function(req, res) {
                     json.docId = parms.doc
                     try {
                         json=JSON.parse(fs.readFileSync(`data/${json.docId}.json`, 'utf8'))
+                    } catch (err) {
+                        json.msg="Either no data file was created for that token or the token is not valid. Try to get it directly to find out which case it is."
+                        json.error=err
+                    }
+                } else if (parms.oauth) { 
+                    json.oauthId = parms.oauth
+                    try {
+                        json=JSON.parse(fs.readFileSync(`oauth/${json.oauthId}.json`, 'utf8'))
                     } catch (err) {
                         json.msg="Either no data file was created for that token or the token is not valid. Try to get it directly to find out which case it is."
                         json.error=err
