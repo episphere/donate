@@ -4,4 +4,4 @@
 })()
 
 
-console.log("dona loaded from donation.js")
+console.log("dona imported by donation.js from https://github.com/episphere/donate/blob/main/methods.js")
