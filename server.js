@@ -179,18 +179,22 @@ http.createServer(async function(req, res) {
                 }).then(x=>x.json().then(y=>{
                     //console.log(y)
                     // disable invite token, first generate a new none and rename existing user data file
-                    y.oldToken=parms.token // in case system crahses halfway
-                    y.token = makeTokens().join()
-                    try{ // rename data file if it exists
-                        fs.renameSync(`./data/${parms.token}.json`,`./data/${y.token}.json`)
-                    }catch(err){
-                        console.log(`no need to rename ${y.token}.json, it doesn't exist`)
+                    if(y.error){
+                        res.end(JSON.stringify(y)) // most likely authentication went wrong
+                    }else{
+                        y.oldToken=parms.token // in case system crahses halfway
+                        y.token = parms.newToken||makeTokens().join() // use new token if provided, or create a new one
+                        try{ // rename data file if it exists
+                            fs.renameSync(`./data/${parms.token}.json`,`./data/${y.token}.json`)
+                        }catch(err){
+                            console.log(`no need to rename ${y.token}.json, it doesn't exist`)
+                        }
+                        // replace old token by new one in list of tokens, maybe this could be async ...
+                        fs.writeFileSync(`./data/tokens.txt`,fs.readFileSync(`./data/tokens.txt`,'utf8').replace(parms.token,y.token))
+                        // save oauth link file with new token
+                        fs.writeFileSync(`./oauth/${y.id}.json`,JSON.stringify(y))
+                        res.end(JSON.stringify({msg:`OAuth ${y.id} linked to token ${y.token}`}))
                     }
-                    // replace old token by new one in list of tokens, maybe this could be async ...
-                    fs.writeFileSync(`./data/tokens.txt`,fs.readFileSync(`./data/tokens.txt`,'utf8').replace(parms.token,y.token))
-                    // save oauth link file with new token
-                    fs.writeFileSync(`./oauth/${y.id}.json`,JSON.stringify(y))
-                    res.end(JSON.stringify({msg:`OAuth ${y.id} linked to token ${y.token}`}))
                 }))
             } else { // none of the above
                 fs.readFile(`data/${tk}.json`, 'utf8', function(err, data) {
@@ -244,9 +248,7 @@ http.createServer(async function(req, res) {
                             fs.appendFileSync('data/tokens.txt', `,${json.newTokens.join(',')}`);
                             tokens = getTokens() // updating the global donor token list in memory
                         }
-                        
                     }
-                        
                 }
                 res.end(JSON.stringify(json))
             }else{ // Admin POST 
