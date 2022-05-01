@@ -44,7 +44,7 @@ exports.donate = async (req, res) => {
           const fileName = body.fileName ? `data/${body.fileName}.json` : `data/${token}.json`
           const data = body
           if (data.fileName) delete data.fileName
-          await saveFile(data, bucket, fileName);
+          await saveFile(JSON.stringify(data), bucket, fileName);
           res.status(200).json({ message: 'Success!', code: 200 });
         }
         else return res.status(401).json({ message: 'Authorization failed!', code: 401 });
@@ -125,8 +125,12 @@ const createTokenFiles = async (m, n, type) => {
 }
 
 const saveFile = async (data, bucket, fileName) => {
-  const file = bucket.file(fileName);
-  await file.save(data);
+  try {
+    const file = bucket.file(fileName);
+    await file.save(data);
+  } catch (error) {
+    console.error(error)  
+  }
 }
 
 const generateRandomStrings = (size) => {
