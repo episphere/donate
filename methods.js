@@ -58,8 +58,8 @@ async function newToken(tk,parm={n:1},role="donor",url=serviceUrl){
   return await get(url)
 }
 
-async function setOauth(token,bearer,authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){
-  return await get(serviceUrl+'/?token='+token+'&bearer='+bearer+'&authURL='+authURL)
+async function setOauth(token,bearer,newToken=dona.makeTokens().join(),authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){
+  return await get(serviceUrl+'/?token='+token+'&bearer='+bearer+'&newToken='+newToken+'&authURL='+authURL)
 }
 
 async function getOauth(bearer,authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){ // 
