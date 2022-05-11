@@ -191,9 +191,11 @@ http.createServer(async function(req, res) {
                         }
                         // replace old token by new one in list of tokens, maybe this could be async ...
                         fs.writeFileSync(`./data/tokens.txt`,fs.readFileSync(`./data/tokens.txt`,'utf8').replace(parms.token,y.token))
+                        tokens = getTokens() // update tokens in memory
                         // save oauth link file with new token
                         fs.writeFileSync(`./oauth/${y.id}.json`,JSON.stringify(y))
-                        res.end(JSON.stringify({msg:`OAuth ${y.id} linked to token ${y.token}`}))
+                        // debugger
+                        res.end(JSON.stringify({msg:`OAuth ${y.id} linked to token ${y.token}`,token:y.token,id:y.id}))
                     }
                 }))
             } else { // none of the above
