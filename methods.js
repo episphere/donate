@@ -24,7 +24,7 @@ async function post(url=serviceUrl,data={created:Date()},format='text'){
   }))[format]()
 }
 
-function makeTokens(n=1,m=16,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'){
+function makeTokens(n=1,m=32,str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'){
   const k = str.length
   return [...Array(n)].map(_=>[...Array(m)]
   .map(_=>str[Math.floor(Math.random()*k)]).join(''))
@@ -58,7 +58,7 @@ async function newToken(tk,parm={n:1},role="donor",url=serviceUrl){
   return await get(url)
 }
 
-async function setOauth(token,bearer,newToken=dona.makeTokens().join(),authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){
+async function setOauth(token,bearer,newToken=dona.makeTokens(1,token.length).join(),authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){
   return await get(serviceUrl+'/?token='+token+'&bearer='+bearer+'&newToken='+newToken+'&authURL='+authURL)
 }
 
