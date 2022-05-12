@@ -39,7 +39,7 @@ function adminToken() {
         fs.writeFileSync("./data/admin.txt", makeTokens(1, 64).join(','))
         adminTk = fs.readFileSync('./data/admin.txt', 'utf8')
     }
-    return adminTk
+    return adminTk.split(',')
 }
 var adminTk = adminToken()
 
@@ -88,7 +88,9 @@ function makeTokens(n=1, m=32, str='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGH
 function readExists(filename){
     let json
     try {json = JSON.parse(fs.readFileSync(filename, 'utf8'))
-    } catch (err) {}
+    } catch (err) {
+        console.log(err)
+    }
     return json
 }
 
@@ -101,14 +103,41 @@ http.createServer(async function(req, res) {
     //debugger 
     let parms = getParms(req.url)
     if(parms.getOauth){ // get token from oauth
-        let x = await (await fetch(parms.authURL,{
-            headers:{
-                authorization:'Bearer '+parms.getOauth
+        let x,y
+        if(!parms.id){ // if this is a validated donor getting token info
+            try{
+                x = await (await fetch(parms.authURL,{
+                    headers:{
+                        authorization:'Bearer '+parms.getOauth
+                    }
+                })).json()
+                // extract token from oauth
+                y = fs.readFileSync(`oauth/${x.id}.json`, 'utf8')
+            }catch(err){
+                x = {
+                    msg:'oauth2 bearer token validation failed',
+                    err:err
+                }
+                y=JSON.stringify(x)
             }
-        })).json()
-        // extract token from oauth
-        y = fs.readFileSync(`oauth/${x.id}.json`, 'utf8')
-        //y = JSON.parse(y)
+        }else{ // if this si an admin getting oauth info
+            // check that bearer token is an admin token
+            //if(adminTk.match(parms.getOauth)){ // if admin token valid
+            if(adminTk.indexOf(parms.getOauth)!=-1){ // if admin token valid
+                let ids = fs.readdirSync('oauth').filter(x=>x.match(/\.json?/))
+                if(ids.indexOf(parms.id+'.json')!=-1){
+                    y = fs.readFileSync(`oauth/${parms.id}.json`, 'utf8')
+                }else{
+                    y={msg:`auth id ${parms.id} not found`}
+                }
+                
+            }else{
+                y={msg:'invalid admin token'}
+            }
+        }
+        if(typeof(y)=='object'){
+            y=JSON.stringify(y)
+        }
         res.end(y)
     }else if (tk) { // token is being provided directly
         // if valid user token provided
@@ -125,7 +154,9 @@ http.createServer(async function(req, res) {
                 let oldData
                 try {
                     oldData = fs.readFileSync(`data/${tk}.json`, 'utf8')
-                } catch (err) {}
+                } catch (err) {
+                    console.log(err)
+                }
                 if (oldData) {
                     oldData = JSON.parse(oldData)
                     if (oldData.readWrite) {
@@ -210,7 +241,7 @@ http.createServer(async function(req, res) {
         }
     } else {
         tk = getTokenFromURL(req.url)||new RegExp(/^$/g)
-        if (adminTk.match(tk)) { // if not donor but Admin token 
+        if (adminTk.indexOf(tk)!=-1) { // if not donor but Admin token 
             // Admin token
             parms
             if(req.method=="GET"){ // Admin GET
@@ -237,7 +268,7 @@ http.createServer(async function(req, res) {
                     }
                 } else { // admin harvest or token insert
                     if(!parms.role){ // harvest
-                        json = JSON.parse(`{"msg":"admin harvest at ${Date()}","files":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))},"oauth":${JSON.stringify(fs.readdirSync('oauth').filter(x=>x.match(/.json$/)))}}`)
+                        json = JSON.parse(`{"msg":"admin harvest at ${Date()}","donations":${JSON.stringify(fs.readdirSync('data').filter(x=>x.match(/.json$/)))},"oauth":${JSON.stringify(fs.readdirSync('oauth').filter(x=>x.match(/.json$/)))}}`)
                         json.data=readExists(`data/${tk}.admin`)
                     }else{ // token insert
                         json.newTokens = makeTokens(parseInt(parms.num),parseInt(parms.lgh))
