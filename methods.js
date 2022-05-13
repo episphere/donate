@@ -74,4 +74,4 @@ async function getOauth(bearer,id,authURL="https://www.googleapis.com/oauth2/v1/
   return await get(url)
 }
 
-export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth}
+export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth,serviceUrl}
