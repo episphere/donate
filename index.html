@@ -14,7 +14,7 @@ Typical examples are the donation of consumer genomics and wearable sensor data.
 <p>
 It is, however, not reasonable to expect participants to have the computational skills, or the patience, to handle the data extraction and submission on their own. 
 It is also not reasonable that epidemiologists are taken hostage by the IT budgets of customized closed-source software development. 
-Instead, we argue, the data donnation should be orchestrated by cohort study Web Applications that operate a core of open-source services.
+Instead, we argue, the data donnation should be orchestrated by cohort study Web Applications that operate a core of open-source managed services (ideally zero-idle, with a <a href="https://www.ncbi.nlm.nih.gov/pubmed/30671301" target="_blank">serverless</a> cloud execution model).
 </p>
 <p><p><b style="color:brown">Solution -</b>
 A minimalist public open-source web service was developed to manage individual invitation tokens that the study participant associates with an <a href="https://episphere.github.io/oauth" target="_blank">OAuth2 identity</a>.
@@ -28,20 +28,30 @@ The service, in the public domain and with open-source at GitHub, automatically 
 </p>
 </div>
 <p>
-[<span id="showHide" class="link" style="color:green">hide info</span>]
+<button id="showHide" class="link" style="color:green">Hide information</button>
+</p>
+<div id="sandbox">
+EpiDonate was already loaded in this page, by 
+    <pre style="color:purple;font-size:medium;font-family:Verdana;font-style:italic"><b>dona</b> = await import('https://episphere.github.io/donate/methods.js')</pre>
+</div>
+<p>
+As illustrated in the <a href="https://www.youtube.com/playlist?list=PLkL13FANCVB1APOiA8IQm18hKAstGpKNV" target="_blank">tutorial</a> and <a href="https://github.com/episphere/donate/wiki" target="_blank"> documentation</a>, opening your browser <a href="https://developer.chrome.com/docs/devtools/overview/" target="_blank">DevTools</a> will provide you with a console, a network tab, and a full fledged IDE where to experiment with epiDonate's SDK.
+    Maybe start with the <a href="https://github.com/episphere/donate/wiki/setUrl#example" target="_blank">this public deployment</a>.
 </p>
 
-<button>Donate</button>
+</div>
 </body>
 <script>
     showHide.onclick=function(){
         let info = document.getElementById('info')
-        if(this.innerText=='hide info'){
+        if(this.innerText=='Hide information'){
             info.hidden=true
-            this.innerText='show info'
+            this.innerText='Show information'
+            //.style.color='brown'
         }else{
             info.hidden=false   
-            this.innerText='hide info'    
+            this.innerText='Hide information'
+            //this.style.color='green'
         }
     }
 </script>

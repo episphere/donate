@@ -14,7 +14,7 @@ function getTokens(n=10) {
         fs.writeFileSync("./data/tokens.txt", [...Array(n)].map(_=>makeTokens(1, 32)).join(','))
         tks = fs.readFileSync('./data/tokens.txt', 'utf8').split(',')
     }
-    return tks
+    return tks 
 }
 var tokens = getTokens()
 
