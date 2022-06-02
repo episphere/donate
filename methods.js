@@ -1,6 +1,6 @@
 // donation SDK methods
 
-var serviceUrl = 'http://localhost:3000'
+var serviceUrl = 'https://donate.jonasalmeida.repl.co'//'http://localhost:3000'
 
 function setUrl(url=serviceUrl){ // set default url as something else
   serviceUrl=url
@@ -74,4 +74,21 @@ async function getOauth(bearer,id,authURL="https://www.googleapis.com/oauth2/v1/
   return await get(url)
 }
 
-export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth,serviceUrl}
+// enabling epiVerse of multiple epiDonate backends
+
+
+function donation(url="https://donate.jonasalmeida.repl.co"){
+  this.date=Date()
+  this.serviceUrl=url
+  this.get=(x='',format='json')=>get(this.serviceUrl+'?'+x,format)
+  this.post=(x='',dt={created:Date()},format='json')=>post(this.serviceUrl+'?'+x,dt,format)
+  this.makeTokens=makeTokens
+  this.getParms=getParms
+  this.newToken=newToken
+  //this.setUrl=serviceUrl -> not clear why this would make sense,
+  //it would set the serviceUrl parameter of the module, not instance of donation
+  this.setOauth=setOauth
+  this.getOauth=getOauth
+}
+
+export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth,serviceUrl,donation}
