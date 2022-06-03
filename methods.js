@@ -80,8 +80,8 @@ async function getOauth(bearer,id,authURL="https://www.googleapis.com/oauth2/v1/
 function donation(url="https://donate.jonasalmeida.repl.co"){
   this.date=Date()
   this.serviceUrl=url
-  this.get=(x='',format='json')=>get(this.serviceUrl+'?'+x,format)
-  this.post=(x='',dt={created:Date()},format='json')=>post(this.serviceUrl+'?'+x,dt,format)
+  this.get=(x='',format='json')=>get(this.serviceUrl+'?token='+x,format)
+  this.post=(x='',dt={created:Date()},format='json')=>post(this.serviceUrl+'?token='+x,dt,format)
   this.makeTokens=makeTokens
   this.getParms=getParms
   this.newToken=newToken
