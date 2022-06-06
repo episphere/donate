@@ -77,7 +77,7 @@ async function getOauth(bearer,id,authURL="https://www.googleapis.com/oauth2/v1/
 // enabling epiVerse of multiple epiDonate backends
 
 
-function donation(url="https://donate.jonasalmeida.repl.co"){
+function deployment(url="https://donate.jonasalmeida.repl.co"){
   this.date=Date()
   this.serviceUrl=url
   this.get=(x='',format='json')=>get(this.serviceUrl+'?token='+x,format)
@@ -86,9 +86,9 @@ function donation(url="https://donate.jonasalmeida.repl.co"){
   this.getParms=getParms
   this.newToken=newToken
   //this.setUrl=serviceUrl -> not clear why this would make sense,
-  //it would set the serviceUrl parameter of the module, not instance of donation
+  //it would set the serviceUrl parameter of the module, not of the instantiated deployment
   this.setOauth=setOauth
   this.getOauth=getOauth
 }
 
-export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth,serviceUrl,donation}
+export {get,post,makeTokens,getParms,newToken,setUrl,setOauth,getOauth,serviceUrl,deployment}
