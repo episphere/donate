@@ -1,0 +1,179 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "The epiDonate web service is a minimalist implementation of the data infrastructure design we identified for NIH Connect for Cancer Prevention Study (CONNECT). This Minimal infrastructure for data donation uses the modern Web Stack operating a single HTTP REST API that handles transactions on behalf and withing the governance of the participant. Specifically, it relies on a tabulation of HTTP GET and POST methods with user-defined read/write permissions. The service, in the public domain and with open-source at GitHub, automatically creates user and admin tokens stored in a gitignored data folder.",
+      "title": "epiSphere Donate Documentation",
+      "version": "1.0"
+    },
+    "host": "donate.jonasalmeida.repl.co",
+    "tags": [
+      {
+        "name": "donation",
+        "description": "Everything about the epiDonate SDK methods"
+      }
+    ],
+    "schemes": [
+      "https"
+    ],
+    "paths": {
+      "/setUrl": {
+        "put": {
+          "tags": [
+            "donation"
+          ],
+          "summary": "Sets the URL for the epiDonate service",
+          "description": "",
+          "operationId": "setUrl",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "URL",
+              "name": "URL",
+              "description": "The URL the epiDonate service is set to",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          ],
+          "responses": { 
+                "200": {
+                  "description": "successful operation",
+                  "schema": {
+                      "type": "object",
+                      "properties":{
+                          "URL":{
+                              "type": "string",
+                              "description": "URL of the epiDonate Service"
+                          }
+                      }
+                    }
+                },
+            "405": {
+              "description": "Invalid input"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        }
+      },
+      "/?token={token}": {
+        "post": {
+          "tags": [
+            "donation"
+          ],
+          "summary": "Donate data to URL",
+          "description": "Multiple status values can be provided with comma separated strings",
+          "operationId": "post",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "path",
+              "description": "Token associated with the data being donated",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "in": "body",
+              "description": "JSON data beind donated",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "400": {
+              "description": "Invalid status value"
+            }
+          },
+          "security": [
+            {
+              "petstore_auth": [
+                "write:pets",
+                "read:pets"
+              ]
+            }
+          ]
+        },
+        
+        "get": {
+          "tags": [
+            "donation"
+          ],
+          "summary": "Find pet by ID",
+          "description": "Returns a single pet",
+          "operationId": "getPetById",
+          "produces": [
+            "application/xml",
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "path",
+              "description": "ID of pet to return",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "400": {
+              "description": "Invalid token supplied"
+            },
+            "404": {
+              "description": "Pet not found"
+            }
+          },
+          "security": [
+            {
+              "api_key": []
+            }
+          ]
+        }
+      }
+    },
+    "securityDefinitions": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "authorizationUrl": "http://petstore.swagger.io/api/oauth/dialog",
+        "flow": "implicit",
+        "scopes": {
+          "write:pets": "modify pets in your account",
+          "read:pets": "read your pets"
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+}
