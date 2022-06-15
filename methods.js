@@ -62,14 +62,14 @@ async function setOauth(token,bearer,newToken=dona.makeTokens(1,token.length).jo
   return await get(serviceUrl+'/?token='+token+'&bearer='+bearer+'&newToken='+newToken+'&authURL='+authURL)
 }
 
-async function getOauth(bearer,id,authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){ // 
-  let url=bearer
+async function getOauth(bearerORadmin,id,authURL="https://www.googleapis.com/oauth2/v1/userinfo?alt=json"){ // 
+  let url=bearerORadmin
   if(!id){ // if this is not an admin call for id information    
     if(!url.match(':')){
-      url=serviceUrl+'/?getOauth='+bearer+'&authURL='+authURL
+      url=serviceUrl+'/?getOauth='+bearerORadmin+'&authURL='+authURL
     }
   }else{ // bearer token if an admin token looking for a auth id
-    url=serviceUrl+'/?getOauth='+bearer+'&id='+id+'&authURL='+authURL
+    url=serviceUrl+'/?getOauth='+bearerORadmin+'&id='+id+'&authURL='+authURL
   }
   return await get(url)
 }
