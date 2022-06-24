@@ -2,7 +2,7 @@
 ### Live at https://episphere.github.io/donate
 Minimum token based web-stack infrastructure (server-side, nodejs) for data donation.
 
-* A test live deployment, with all constructs and files exposed for public inspection, is provided at https://replit.com/@jonasalmeida/donate. 
+* A demonstration live deployment, with all constructs and files exposed for public inspection, is provided at https://replit.com/@jonasalmeida/donate. 
 
 * A small test client library for get and post data donations is also automatically served at https://episphere.github.io/donate.
 
