@@ -4,9 +4,9 @@ Minimum token based web-stack infrastructure (server-side, nodejs) for data dona
 
 * A demonstration live deployment, with all constructs and files exposed for public inspection, is provided at https://replit.com/@jonasalmeida/donate. 
 
-* A small test client library for get and post data donations is also automatically served at https://episphere.github.io/donate.
+* A small test client library for get and post data donations is automatically served at https://episphere.github.io/donate.
 
-* See also the reference [SDK documentation](https://github.com/episphere/donate/wiki) and webcast [YouTube tutorials](https://www.youtube.com/playlist?list=PLkL13FANCVB1APOiA8IQm18hKAstGpKNV).
+* **Most important, see reference [SDK documentation](https://github.com/episphere/donate/wiki) and webcast [YouTube tutorials](https://www.youtube.com/playlist?list=PLkL13FANCVB1APOiA8IQm18hKAstGpKNV).**
 
 * A detailed manuscript has been submitted for peer-reviewed publication ... 
 
