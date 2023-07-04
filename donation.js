@@ -1,6 +1,6 @@
 
 (async function(){ // loading ES6 module for script tag
-    dona = await import('./methods.js')    
+    dona = await import('https://episphere.github.io/donate/methods.js')    
 })()
 
 
