@@ -22,7 +22,18 @@ function getToken(){ // extract parameters from search or hash
     return donateToken
 }
 
-let token = await getToken()
+function getUrl(){ // get deployment url
+    let donateToken=null
+    if(location.href.match(/donateUrl=[^&#]+/)){
+        donateToken=(location.search+location.hash).match(/donateUrl=[^&#]+/)[0].split('=')[1]
+        //remove token from hash if that is where it is (that would be ideal):
+        location.hash=location.hash.replace(/[#&]donateUrl=[^&#]+/,'')
+    }
+    return donateUrl
+}
+
+let token = await getToken() // sync token
+let url = await getUrl() // deployment url
 
 // test tokens at test deployment: https://replit.com/@jonasalmeida/donate#data/tokens.txt
 async function sync(dt,token,url="https://donate.jonasalmeida.repl.co"){ // synch data to donate backend
@@ -37,6 +48,7 @@ async function sync(dt,token,url="https://donate.jonasalmeida.repl.co"){ // sync
 
 export{
     dona,
+    url,
     token,
-    sync
+    sync  // only this one is needed, other methods are for debugging
 }
