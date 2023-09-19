@@ -23,10 +23,10 @@ function getToken(){ // extract parameters from search or hash
 }
 
 function getUrl(){ // get deployment url
-    let donateToken=null
+    let donateUrl=null
     if(location.href.match(/donateUrl=[^&#]+/)){
-        donateToken=(location.search+location.hash).match(/donateUrl=[^&#]+/)[0].split('=')[1]
-        //remove token from hash if that is where it is (that would be ideal):
+        donateUrl=(location.search+location.hash).match(/donateUrl=[^&#]+/)[0].split('=')[1]
+        //remove url from hash if that is where it is (that would be ideal):
         location.hash=location.hash.replace(/[#&]donateUrl=[^&#]+/,'')
     }
     return donateUrl
