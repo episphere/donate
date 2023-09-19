@@ -36,13 +36,16 @@ let token = await getToken() // sync token
 let url = await getUrl() // deployment url
 
 // test tokens at test deployment: https://replit.com/@jonasalmeida/donate#data/tokens.txt
-async function sync(dt,token,url="https://donate.jonasalmeida.repl.co"){ // synch data to donate backend
+async function sync(dt,token0,url0="https://donate.jonasalmeida.repl.co"){ // synch data to donate backend
+    token = token || token0
+    url = url || url0
     dona.setUrl(url) // set deployment
-    console.log('deployment:',dona)
+    //console.log('deployment:',dona)
     let old = JSON.parse(await dona.get(token))
-    console.log('old data:',old)
-    let res = dona.post(token,dt)
-    res.then(console.log)
+    let res = null
+    if(dt){
+        await dona.post(token,dt)   
+    }
     return old
 }
 
